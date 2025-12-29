@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gcm_defaultSenderId" translatable="false">1099120755234</string>
+    <string name="google_api_key" translatable="false">AIzaSyDOwCTZ9bRuPkD0ofF0KO6G6HOoKN1KJjs</string>
+    <string name="google_app_id" translatable="false">1:1099120755234:android:fe89a06bcd400a58f5007b</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDOwCTZ9bRuPkD0ofF0KO6G6HOoKN1KJjs</string>
+    <string name="google_storage_bucket" translatable="false">pronounce-perfect-ai.firebasestorage.app</string>
+    <string name="project_id" translatable="false">pronounce-perfect-ai</string>
+</resources>

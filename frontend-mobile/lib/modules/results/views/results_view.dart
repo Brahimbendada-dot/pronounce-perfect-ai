@@ -121,7 +121,7 @@ class ResultsView extends StatelessWidget {
                 _buildSection(
                   context,
                   title: 'Words to Practice',
-                  icon: Icons.warning_amber_outlined icon,
+                  icon: Icons.warning_amber_outlined,
                   child: Wrap(
                     spacing: 8,
                     runSpacing: 8,

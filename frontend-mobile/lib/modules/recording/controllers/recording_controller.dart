@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../../services/audio_service.dart';
+import '../../../services/storage_service.dart';
 import '../../../models/lesson_model.dart';
 import '../../analysis/views/analysis_view.dart';
 
@@ -29,7 +31,10 @@ class RecordingController extends GetxController {
   Future<void> requestPermission() async {
     hasPermission.value = await _audioService.requestMicrophonePermission();
     if (!hasPermission.value) {
-      Get.snackbar('Permission Denied', 'Microphone permission is required to record audio');
+      Get.snackbar(
+        'Permission Denied',
+        'Microphone permission is required to record audio',
+      );
     }
   }
 
@@ -42,7 +47,7 @@ class RecordingController extends GetxController {
 
       await _audioService.startRecording();
       isRecording.value = true;
-      
+
       // Start timer
       _startTimer();
     } catch (e) {
@@ -55,14 +60,30 @@ class RecordingController extends GetxController {
       final path = await _audioService.stopRecording();
       isRecording.value = false;
       recordingDuration.value = 0;
-      
+
       if (path != null && currentLesson.value != null) {
         _recordingPath = path;
-        // Navigate to analysis
-        Get.to(() => AnalysisView(
+
+        // Upload to Supabase Storage
+        Get.snackbar('Uploading', 'Uploading audio file...');
+        final audioStorageService = AudioStorageService();
+        final userId = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
+
+        final supabasePath = await audioStorageService.uploadAudio(
           audioFile: File(path),
-          referenceText: currentLesson.value!.referenceText,
-        ));
+          userId: userId,
+        );
+
+        // Delete local file after upload
+        await _audioService.deleteAudioFile(path);
+
+        // Navigate to analysis with Supabase path
+        Get.to(
+          () => AnalysisView(
+            supabaseAudioPath: supabasePath,
+            referenceText: currentLesson.value!.referenceText,
+          ),
+        );
       }
     } catch (e) {
       Get.snackbar('Error', 'Failed to stop recording: $e');

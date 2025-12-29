@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'firebase_options.dart';
 import 'app/theme/app_theme.dart';
 import 'modules/auth/views/login_view.dart';
 import 'modules/subjects/views/subjects_view.dart';
@@ -8,17 +11,19 @@ import 'modules/auth/controllers/auth_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize Firebase
-  // Note: Firebase configuration files (google-services.json & GoogleService-Info.plist) 
-  // need to be added after setting up Firebase project
-  try {
-    await Firebase.initializeApp();
-  } catch (e) {
-    debugPrint('Firebase initialization error: $e');
-    // Continue without Firebase for development
-  }
-  
+
+  // Load environment variables
+  await dotenv.load(fileName: '.env');
+
+  // Initialize Firebase (Auth & Firestore)
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Initialize Supabase (Storage ONLY)
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  );
+
   runApp(const MyApp());
 }
 
@@ -56,7 +61,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _checkAuthState() async {
     await Future.delayed(const Duration(seconds: 2));
-    
+
     // Check if user is logged in
     if (_authController.currentUser.value != null) {
       Get.off(() => const SubjectsView());
@@ -73,21 +78,14 @@ class _SplashScreenState extends State<SplashScreen> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF6B4EFF),
-              Color(0xFF5139CC),
-            ],
+            colors: [Color(0xFF6B4EFF), Color(0xFF5139CC)],
           ),
         ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.mic_rounded,
-                size: 100,
-                color: Colors.white,
-              ),
+              const Icon(Icons.mic_rounded, size: 100, color: Colors.white),
               const SizedBox(height: 24),
               Text(
                 'Pronounce Perfect',

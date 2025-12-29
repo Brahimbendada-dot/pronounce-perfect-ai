@@ -43,7 +43,7 @@ class WelcomeView extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: Colors.white.withOpacity(0.9),
                 ),
-                textAlign: Text Align.center,
+                textAlign: TextAlign.center,
               ),
               
               const Spacer(),

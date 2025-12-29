@@ -1,9 +1,10 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:pronunciation/modules/auth/views/login_view.dart';
+import 'package:pronunciation/modules/onboarding/views/welcome_view.dart';
 import '../../../services/auth_service.dart';
 import '../../../models/user_model.dart';
 import '../../subjects/views/subjects_view.dart';
-import '../views/welcome_view.dart';
 
 class AuthController extends GetxController {
   final AuthService _authService = AuthService();

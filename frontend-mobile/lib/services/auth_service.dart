@@ -21,10 +21,8 @@ class AuthService {
     String? displayName,
   }) async {
     try {
-      final UserCredential credential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      final UserCredential credential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
 
       if (credential.user != null) {
         // Update display name if provided
@@ -85,17 +83,20 @@ class AuthService {
   Future<UserModel?> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      
+
       if (googleUser == null) return null; // User cancelled
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      final UserCredential userCredential = await _auth.signInWithCredential(credential);
+      final UserCredential userCredential = await _auth.signInWithCredential(
+        credential,
+      );
 
       if (userCredential.user != null) {
         final userDoc = await _firestore
@@ -124,6 +125,7 @@ class AuthService {
         }
       }
     } on FirebaseAuthException catch (e) {
+      print(e);
       throw _handleAuthException(e);
     }
     return null;
@@ -131,10 +133,7 @@ class AuthService {
 
   // Sign out
   Future<void> signOut() async {
-    await Future.wait([
-      _auth.signOut(),
-      _googleSignIn.signOut(),
-    ]);
+    await Future.wait([_auth.signOut(), _googleSignIn.signOut()]);
   }
 
   // Send password reset email

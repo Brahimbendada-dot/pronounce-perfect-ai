@@ -1,27 +1,26 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../app/theme/app_colors.dart';
 import '../controllers/analysis_controller.dart';
 
 class AnalysisView extends StatelessWidget {
-  final File audioFile;
+  final String supabaseAudioPath;
   final String referenceText;
-  
+
   const AnalysisView({
     super.key,
-    required this.audioFile,
+    required this.supabaseAudioPath,
     required this.referenceText,
   });
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(AnalysisController());
-    
+
     // Start analysis immediately
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.analyzeAudio(
-        audioFile: audioFile,
+        supabaseAudioPath: supabaseAudioPath,
         referenceText: referenceText,
       );
     });
@@ -75,26 +74,30 @@ class AnalysisView extends StatelessWidget {
                     // Loop animation
                   },
                 ),
-                
+
                 const SizedBox(height: 40),
-                
+
                 const CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryLight),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    AppColors.primaryLight,
+                  ),
                   strokeWidth: 3,
                 ),
-                
+
                 const SizedBox(height: 32),
-                
-                Obx(() => Text(
-                  controller.statusMessage.value,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Colors.white,
+
+                Obx(
+                  () => Text(
+                    controller.statusMessage.value,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.headlineSmall?.copyWith(color: Colors.white),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                )),
-                
+                ),
+
                 const SizedBox(height: 16),
-                
+
                 Text(
                   'This may take a few moments',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1099120755234",
+    "project_id": "pronounce-perfect-ai",
+    "storage_bucket": "pronounce-perfect-ai.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1099120755234:android:fe89a06bcd400a58f5007b",
+        "android_client_info": {
+          "package_name": "com.example.pronunciation"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOwCTZ9bRuPkD0ofF0KO6G6HOoKN1KJjs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

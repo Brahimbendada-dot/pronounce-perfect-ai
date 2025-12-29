@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import '../models/analysis_result_model.dart';
 
@@ -10,8 +9,8 @@ class ApiService {
     _dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
-        connectTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 30),
+        connectTimeout: const Duration(seconds: 60),
+        receiveTimeout: const Duration(seconds: 60),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -39,7 +38,7 @@ class ApiService {
   }
 
   // Health check endpoint
-  Future<bool> health Check() async {
+  Future<bool> healthCheck() async {
     try {
       final response = await _dio.get('/health');
       return response.statusCode == 200;
@@ -48,30 +47,27 @@ class ApiService {
     }
   }
 
-  // Analyze pronunciation
+  // Analyze pronunciation - NEW: Sends Supabase path instead of uploading file
   Future<AnalysisResultModel> analyzePronunciation({
-    required File audioFile,
+    required String supabaseAudioPath,
     required String referenceText,
   }) async {
     try {
-      // Create multipart form data
-      final formData = FormData.fromMap({
-        'audio': await MultipartFile.fromFile(
-          audioFile.path,
-          filename: 'audio.wav',
-        ),
-        'reference_text': referenceText,
-      });
-
+      // Send Supabase path to backend
       final response = await _dio.post(
-        '/analyze-pronunciation',
-        data: formData,
+        '/api/analyze-pronunciation',
+        data: {
+          'supabase_audio_path': supabaseAudioPath,
+          'reference_text': referenceText,
+        },
       );
 
       if (response.statusCode == 200) {
         return AnalysisResultModel.fromJson(response.data);
       } else {
-        throw Exception('Failed to analyze pronunciation: ${response.statusMessage}');
+        throw Exception(
+          'Failed to analyze pronunciation: ${response.statusMessage}',
+        );
       }
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout ||
@@ -102,7 +98,8 @@ class ApiService {
           confidence: 0.85,
         ),
       ],
-      feedback: 'Good overall pronunciation. Focus on vowel clarity and word stress patterns. Keep practicing!',
+      feedback:
+          'Good overall pronunciation. Focus on vowel clarity and word stress patterns. Keep practicing!',
       accuracy: 0.78,
       fluency: 0.72,
       intonation: 0.75,
